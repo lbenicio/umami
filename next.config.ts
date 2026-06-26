@@ -194,21 +194,43 @@ const redirects = [
 
 // Adding rewrites + headers for all alternative tracker script names.
 if (trackerScriptName) {
-  const names = trackerScriptName?.split(',').map(name => name.trim());
+  const entries = trackerScriptName?.split(',').map(name => name.trim());
 
-  if (names) {
-    names.forEach(name => {
-      const normalizedSource = `/${name.replace(/^\/+/, '')}`;
+  if (entries) {
+    entries.forEach(entry => {
+      // If the entry is a full URL, extract the pathname and rewrite to the external URL
+      if (/^https?:\/\//i.test(entry)) {
+        let entryPathname: string;
+        try {
+          entryPathname = new URL(entry).pathname;
+        } catch {
+          return;
+        }
+        const normalizedSource = `/${entryPathname.replace(/^\/+/, '')}`;
 
-      rewrites.push({
-        source: normalizedSource,
-        destination: TRACKER_SCRIPT,
-      });
+        rewrites.push({
+          source: normalizedSource,
+          destination: entry,
+        });
 
-      headers.push({
-        source: normalizedSource,
-        headers: trackerHeaders,
-      });
+        headers.push({
+          source: normalizedSource,
+          headers: trackerHeaders,
+        });
+      } else {
+        // Legacy behavior: rewrite name to /script.js
+        const normalizedSource = `/${entry.replace(/^\/+/, '')}`;
+
+        rewrites.push({
+          source: normalizedSource,
+          destination: TRACKER_SCRIPT,
+        });
+
+        headers.push({
+          source: normalizedSource,
+          headers: trackerHeaders,
+        });
+      }
     });
   }
 }

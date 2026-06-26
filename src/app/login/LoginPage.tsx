@@ -2,11 +2,12 @@
 import { Column, Loading } from '@umami/react-zen';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useLoginQuery } from '@/components/hooks';
+import { useConfig, useLoginQuery } from '@/components/hooks';
 import { LoginForm } from './LoginForm';
 
-export function LoginPage() {
+export function LoginPage({ allowManualLogin = true }: { allowManualLogin?: boolean }) {
   const { user, isLoading } = useLoginQuery();
+  const config = useConfig();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,6 +20,8 @@ export function LoginPage() {
     return <Loading placement="absolute" />;
   }
 
+  const oidcEnabled = config?.oidcEnabled || false;
+
   return (
     <Column
       alignItems="center"
@@ -27,7 +30,11 @@ export function LoginPage() {
       backgroundColor="surface-raised"
       style={{ paddingTop: '15vh' }}
     >
-      <LoginForm />
+      <LoginForm
+        allowManualLogin={allowManualLogin}
+        oidcEnabled={oidcEnabled}
+        oidcButtonText={config?.oidcButtonText || 'Login with SSO'}
+      />
     </Column>
   );
 }

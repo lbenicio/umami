@@ -4,11 +4,18 @@ import { LoginPage } from './LoginPage';
 export const dynamic = 'force-dynamic';
 
 export default async function () {
-  if (process.env.DISABLE_LOGIN || process.env.CLOUD_MODE) {
+  if (process.env.CLOUD_MODE) {
     return null;
   }
 
-  return <LoginPage />;
+  // DISABLE_LOGIN fully blocks access to the login page.
+  if (process.env.DISABLE_LOGIN === 'true') {
+    return null;
+  }
+
+  const manualLoginDisabled = process.env.DISABLE_MANUAL_LOGIN === 'true';
+
+  return <LoginPage allowManualLogin={!manualLoginDisabled} />;
 }
 
 export const metadata: Metadata = {

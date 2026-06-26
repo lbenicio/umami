@@ -10,6 +10,12 @@ import { json, unauthorized } from '@/lib/response';
 import { getAllUserTeams, getUserByUsername } from '@/queries/prisma';
 
 export async function POST(request: Request) {
+  // DISABLE_MANUAL_LOGIN blocks credential-based login (form + API).
+  // DISABLE_LOGIN blocks all access to /login, so the form can't be reached anyway.
+  if (process.env.DISABLE_MANUAL_LOGIN === 'true' || process.env.DISABLE_LOGIN === 'true') {
+    return unauthorized({ message: 'Manual login is disabled' });
+  }
+
   const schema = z.object({
     username: z.string(),
     password: z.string(),

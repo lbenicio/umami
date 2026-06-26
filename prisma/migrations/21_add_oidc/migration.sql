@@ -1,0 +1,2 @@
+ALTER TABLE "user" ADD COLUMN "oidc_id" VARCHAR(255);
+ALTER TABLE "user" ADD COLUMN "oidc_provider" VARCHAR(255);

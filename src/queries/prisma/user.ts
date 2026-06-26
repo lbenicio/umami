@@ -49,6 +49,31 @@ export async function getUserByUsername(username: string, options: GetUserOption
   return findUser({ where: { username: username.toLowerCase() } }, options);
 }
 
+export async function getUserByOidc(oidcId: string, oidcProvider: string) {
+  const { includePassword = true } = {};
+
+  console.log('[oidc] getUserByOidc query:', { oidcId, oidcProvider });
+
+  const result = await prisma.client.user.findFirst({
+    where: {
+      oidcId,
+      oidcProvider,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      username: true,
+      password: includePassword,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  console.log('[oidc] getUserByOidc result:', result ? result.id : 'null');
+
+  return result;
+}
+
 export async function getUsers(criteria: UserFindManyArgs, filters: QueryFilters = {}) {
   const sortFilters = sanitizeSortFilters(filters, USER_SORT_FIELDS, {
     orderBy: 'createdAt',
