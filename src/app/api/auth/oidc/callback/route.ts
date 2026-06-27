@@ -161,9 +161,10 @@ export async function GET(request: Request) {
     });
 
     const ssoUrl = `/sso?${ssoParams.toString()}`;
-    console.log('[oidc] Redirecting to:', ssoUrl.slice(0, 80), '...');
+    const base = process.env.APP_URL || request.url;
+    console.log('[oidc] Redirecting to:', new URL(ssoUrl, base).toString().slice(0, 80), '...');
 
-    return Response.redirect(new URL(ssoUrl, request.url));
+    return Response.redirect(new URL(ssoUrl, base));
   } catch (error: any) {
     console.log('[oidc] ERROR:', error.message || error);
     return serverError(error.message || 'OIDC callback failed');

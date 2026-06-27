@@ -47,6 +47,9 @@ export interface OidcState {
 }
 
 function getBaseUrl(request: Request): string {
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/+$/, '');
+  }
   const url = new URL(request.url);
   return `${url.protocol}//${url.host}`;
 }

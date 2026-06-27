@@ -9,6 +9,7 @@ const TRACKER_SCRIPT = '/script.js';
 const isProd = process.env.NODE_ENV === 'production';
 
 const apiUrl = process.env.API_URL || '';
+const appUrl = process.env.APP_URL || '';
 const basePath = process.env.BASE_PATH || '';
 const cloudMode = process.env.CLOUD_MODE || '';
 const cloudUrl = process.env.CLOUD_URL || '';
@@ -247,6 +248,7 @@ export default withNextIntl({
   reactStrictMode: false,
   env: {
     apiUrl,
+    appUrl,
     basePath,
     cloudMode,
     cloudUrl,
